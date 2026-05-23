@@ -1,7 +1,14 @@
+import os
 import telebot
 from telebot import types
 
-TOKEN = "PUT_YOUR_TOKEN_HERE"
+# گرفتن توکن از Render
+TOKEN = os.getenv("TOKEN")
+
+# چک کردن اینکه توکن وجود دارد
+if not TOKEN:
+    raise ValueError("TOKEN تنظیم نشده!")
+
 ADMIN_ID = 432039844
 
 bot = telebot.TeleBot(TOKEN)
@@ -27,14 +34,12 @@ def start(message):
 # --------------------
 @bot.message_handler(func=lambda message: message.text == "خرید ۱ گیگ ۳۰ روزه")
 def buy(message):
-    text = """
-برای خرید ۱ گیگ مبلغ 480 تومان را به شماره کارت زیر واریز کنید:
+    text = """برای خرید ۱ گیگ مبلغ 480 تومان را به شماره کارت زیر واریز کنید:
 
 5892101261141630
 
-بعد از پرداخت، رسید را ارسال کنید.
-"""
-
+بعد از پرداخت، رسید را ارسال کنید."""
+    
     bot.send_message(message.chat.id, text)
 
 # --------------------
@@ -49,8 +54,7 @@ def all_messages(message):
     else:
         username = "ندارد"
 
-    user_info = f"""
-پیام جدید از کاربر:
+    user_info = f"""پیام جدید از کاربر:
 
 آیدی: {username}
 نام: {message.from_user.first_name}
@@ -59,6 +63,7 @@ def all_messages(message):
 
     bot.send_message(ADMIN_ID, user_info)
 
+    # فوروارد پیام برای ادمین
     bot.forward_message(
         ADMIN_ID,
         message.chat.id,
