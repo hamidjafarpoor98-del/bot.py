@@ -1,13 +1,14 @@
 import telebot
 from telebot import types
 
-import os
-TOKEN = os.getenv("TOKEN")
+TOKEN = "PUT_YOUR_TOKEN_HERE"
 ADMIN_ID = 432039844
 
 bot = telebot.TeleBot(TOKEN)
 
+# --------------------
 # شروع ربات
+# --------------------
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -21,7 +22,9 @@ def start(message):
         reply_markup=markup
     )
 
+# --------------------
 # دکمه خرید
+# --------------------
 @bot.message_handler(func=lambda message: message.text == "خرید ۱ گیگ ۳۰ روزه")
 def buy(message):
     text = """
@@ -34,21 +37,28 @@ def buy(message):
 
     bot.send_message(message.chat.id, text)
 
+# --------------------
 # دریافت همه پیام‌ها
+# --------------------
 @bot.message_handler(func=lambda message: True, content_types=['text', 'photo', 'document'])
 def all_messages(message):
+
+    username = message.from_user.username
+    if username:
+        username = "@" + username
+    else:
+        username = "ندارد"
 
     user_info = f"""
 پیام جدید از کاربر:
 
-آیدی: @{message.from_user.username}
+آیدی: {username}
 نام: {message.from_user.first_name}
 آیدی عددی: {message.from_user.id}
 """
 
     bot.send_message(ADMIN_ID, user_info)
 
-    # فوروارد پیام برای ادمین
     bot.forward_message(
         ADMIN_ID,
         message.chat.id,
